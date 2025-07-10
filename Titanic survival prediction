@@ -1,0 +1,39 @@
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+
+
+data = pd.read_csv('Titanic-Dataset.csv')
+
+data.fillna(data.mean(), inplace=True) 
+
+X = data[['Pclass', 'Age', 'Sex']]
+y = data['Survived']
+
+
+X = pd.get_dummies(X, drop_first=True)
+
+
+classifier = RandomForestClassifier()
+classifier.fit(X, y)
+
+
+def predict_survival(pclass, age, sex):
+    user_input = pd.DataFrame({
+        'Pclass': [pclass],
+        'Age': [age],
+        'Sex_male': [1 if sex.lower() == 'male' else 0]
+    })
+
+    prediction = classifier.predict(user_input)
+
+    if prediction[0] == 1:
+        return "Survived"
+    else:
+        return "Not Survived"
+
+pclass_input = int(input("Enter Pclass (1, 2, or 3): "))
+age_input = float(input("Enter Age: "))
+sex_input = input("Enter Sex (male or female): ")
+
+result = predict_survival(pclass_input, age_input, sex_input)
+print("Prediction:", result)
